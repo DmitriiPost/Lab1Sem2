@@ -5,6 +5,7 @@
 using namespace std;
 
 const int STUDENTS_AMOUNT = 10;
+const int TEACHERS_AMOUNT = 10; // idz
 
 struct Profile
 {
@@ -14,6 +15,152 @@ struct Profile
     int id;
     int grades[8];
 };
+
+struct TeacherProfile // idz
+{
+    string fullName;
+    char sex;
+    int age;
+    char scientificDegree;
+    string disciplineName;
+    string mail;
+    int group;
+};
+
+void findByFullName(TeacherProfile teacher[]) // idz
+{
+    string s;
+    bool haveResults = false;
+    cout << "Введите фамилию преподователя: ";
+    cin >> s;
+    cin.clear();
+    bool isSameName = true;
+    for (int i = 0; i < TEACHERS_AMOUNT; i++)
+    {
+        if (teacher[i].fullName >= s)
+        {
+            for (int j = 0; j < s.length(); j++)
+            {
+                if (s[j] != teacher[i].fullName[j])
+                {
+                    isSameName = false;
+                }
+            }
+            if (isSameName)
+            {
+                cout << teacher[i].fullName << '\n';
+                cout << teacher[i].sex << '\n';
+                cout << teacher[i].age << '\n';
+                cout << teacher[i].scientificDegree << '\n';
+                cout << teacher[i].disciplineName << '\n';
+                cout << teacher[i].mail << '\n';
+                cout << teacher[i].group << '\n';
+                haveResults = true;
+            }
+        }
+        isSameName = true;
+    }
+    if (!haveResults)
+    {
+        cout << "Никого не найдено\n";
+    }
+}
+
+void findByGroup(TeacherProfile teacher[]) // idz
+{
+    int groupNum;
+    bool haveResults = false;
+    cout << "Введите номер группы: ";
+    cin >> groupNum;
+    for (int i = 0; i < TEACHERS_AMOUNT; i++)
+    {
+        if (teacher[i].group == groupNum)
+        {
+            cout << teacher[i].fullName << '\n';
+            cout << teacher[i].sex << '\n';
+            cout << teacher[i].age << '\n';
+            cout << teacher[i].scientificDegree << '\n';
+            cout << teacher[i].disciplineName << '\n';
+            cout << teacher[i].mail << '\n';
+            cout << teacher[i].group << '\n';
+            haveResults = true;
+        }
+    }
+    if (!haveResults)
+    {
+        cout << "Никого не найдено\n";
+    }
+}
+
+void findByDiscipline(TeacherProfile teacher[]) // idz
+{
+    string discipline;
+    bool haveResults = false;
+    cout << "Введите наименование дисциплины: ";
+    cin >> discipline;
+    for (int i = 0; i < TEACHERS_AMOUNT; i++)
+    {
+        if (teacher[i].disciplineName == discipline)
+        {
+            cout << teacher[i].fullName << '\n';
+            cout << teacher[i].sex << '\n';
+            cout << teacher[i].age << '\n';
+            cout << teacher[i].scientificDegree << '\n';
+            cout << teacher[i].disciplineName << '\n';
+            cout << teacher[i].mail << '\n';
+            cout << teacher[i].group << '\n';
+            haveResults = true;
+        }
+    }
+    if (!haveResults)
+    {
+        cout << "Никого не найдено\n";
+    }
+}
+
+void idz()
+{
+    TeacherProfile* teacher = new TeacherProfile[TEACHERS_AMOUNT];
+    ifstream database("C:\\Users\\mitya\\source\\repos\\Lab1Sem2\\teachers.txt");
+    if (!database.is_open())
+    {
+        cout << "Ошибка открытия!\n";
+    }
+    else
+    {
+        string s;
+        for (int i = 0; i < TEACHERS_AMOUNT; i++)
+        {
+            getline(database, teacher[i].fullName);
+            database >> teacher[i].sex >> teacher[i].age >> teacher[i].scientificDegree;
+            getline(database, s, '\n');
+            getline(database, teacher[i].disciplineName);
+            getline(database, teacher[i].mail);
+            database >> teacher[i].group;
+            getline(database, s, '\n');
+        }
+        database.close();
+
+        int choise;
+        cout << "По какому параметру хотите найти преподователя:\n1. Фамилия\n2. Номер группы\n3. Название дисциплины\n";
+        cin >> choise;
+        switch (choise)
+        {
+        case (1):
+            findByFullName(teacher);
+            break;
+        case (2):
+            findByGroup(teacher);
+            break;
+        case (3):
+            findByDiscipline(teacher);
+            break;
+        default:
+            break;
+        }
+    }
+    delete []teacher;
+}
 
 int countStudents()
 {
@@ -99,6 +246,7 @@ void createNewRecord()
     {
         cin >> student.grades[i];
     }
+    cin.clear();
 
     bool isDismissed = false;
     for (int i = 0; i < 8; i++)
@@ -228,6 +376,7 @@ void editData()
                 }
                 database.close();
             }
+            delete[]student;
         }
     }
     else
@@ -283,7 +432,7 @@ void showGroup()
     {
         cout << "Ни одной записи не найдено" << '\n';
     }
-    
+    delete[]student;
 }
 
 void showTop()
@@ -311,6 +460,7 @@ void showTop()
         cout << student[i].fullName << " " << student[i].group << " гр. " << float(sumOfGrades[i]) / 8 << '\n';
     }
     cout << '\n';
+    delete[]student;
 }
 
 void countMale()
@@ -328,6 +478,7 @@ void countMale()
         }
     }
     cout << "M: " << maleAmount << " W: " << count - maleAmount << '\n';
+    delete[]student;
 }
 
 void showRichStudents()
@@ -398,6 +549,7 @@ void showRichStudents()
         hasThree = false;
         hasFour = false;
     }
+    delete[]student;
 }
 
 void showStudentsWithNumK()
@@ -419,6 +571,7 @@ void showStudentsWithNumK()
             cout << '\n';
         }
     }
+    delete[]student;
 }
 
 int main()
@@ -454,6 +607,9 @@ int main()
             break;
         case (8):
             showStudentsWithNumK();
+            break;
+        case (9):
+            idz();
             break;
         case (0):
             exit(0);
